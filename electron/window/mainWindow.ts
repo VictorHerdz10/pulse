@@ -23,7 +23,6 @@ export const createMainWindow = (isDev: boolean): BrowserWindow => {
     mainWindow.loadURL('http://localhost:5173');
     mainWindow.webContents.openDevTools();
   } else {
-    mainWindow.webContents.openDevTools();
    
     mainWindow.loadFile(path.join(__dirname, '../../frontend/dist/index.html'));
   }

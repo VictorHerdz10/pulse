@@ -1,8 +1,8 @@
 version: 1.0.0
 files:
   - url: Pulse-Music-Player-Setup-1.0.0.exe
-    sha512: MEjrzGsHv03oiqCFhSvy80imemgUy1RcqaaoE13Za6z2i7H9C2GqBMxQfFnoT1IuJtReWCoA6k2Sxv1HtUVEqw==
-    size: 188477387
+    sha512: lRS4HGvWYMRFy6qpHlB8+fdG9mRQD4fUSq/eFR0GHp4oe627fxnQAu3KhIrWAf3HHkQJSg6N6EnwdMBJ2k0bMg==
+    size: 217466856
 path: Pulse-Music-Player-Setup-1.0.0.exe
-sha512: MEjrzGsHv03oiqCFhSvy80imemgUy1RcqaaoE13Za6z2i7H9C2GqBMxQfFnoT1IuJtReWCoA6k2Sxv1HtUVEqw==
-releaseDate: '2025-11-25T16:04:46.530Z'
+sha512: lRS4HGvWYMRFy6qpHlB8+fdG9mRQD4fUSq/eFR0GHp4oe627fxnQAu3KhIrWAf3HHkQJSg6N6EnwdMBJ2k0bMg==
+releaseDate: '2025-12-06T17:37:51.166Z'
