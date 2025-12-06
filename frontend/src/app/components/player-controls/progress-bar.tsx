@@ -1,6 +1,6 @@
 import { Slider } from "@/components/ui/slider";
 import { useSoundStore } from "@/store/useSound";
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useCallback, useState } from "react";
 
 interface ProgressBarProps {
   currentTime: number;
@@ -11,7 +11,8 @@ interface ProgressBarProps {
 export function ProgressBar({ currentTime, duration, onProgressChange }: ProgressBarProps) {
   const { currentSound } = useSoundStore();
   const isDraggingRef = useRef(false);
-  const updateIntervalRef = useRef<NodeJS.Timeout>();
+  const updateIntervalRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
+  const [bufferPercent, setBufferPercent] = useState(0);
 
   const formatTime = (seconds: number) => {
     const roundedSeconds = Math.round(seconds);
@@ -20,20 +21,27 @@ export function ProgressBar({ currentTime, duration, onProgressChange }: Progres
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
-  const updateProgress = useCallback(() => {
-    if (!currentSound) return;
-    const seek = currentSound.seek();
-    if (typeof seek === "number") {
-      onProgressChange([Math.round(seek)]);
-    }
-  }, [currentSound, onProgressChange]);
+  // Implemented inside startProgressInterval
 
   const startProgressInterval = useCallback(() => {
-    const updateProgress = () => {
-      if (!isDraggingRef.current) {
-        const seek = currentSound?.seek();
-        if (typeof seek === "number") {
-          onProgressChange([Math.round(seek)]);
+    const tick = () => {
+      if (isDraggingRef.current) return;
+      if (!currentSound) return;
+
+      if (currentSound instanceof HTMLMediaElement) {
+          const audio = currentSound as HTMLMediaElement;
+        const ct = typeof audio.currentTime === 'number' ? audio.currentTime : 0;
+        onProgressChange([Math.floor(ct)]);
+        if (duration > 0 && audio.buffered && audio.buffered.length > 0) {
+          try {
+            const end = audio.buffered.end(audio.buffered.length - 1);
+            const pct = Math.min(100, Math.max(0, (end / duration) * 100));
+            setBufferPercent(pct);
+          } catch {
+            setBufferPercent(0);
+          }
+        } else {
+          setBufferPercent(0);
         }
       }
     };
@@ -42,9 +50,9 @@ export function ProgressBar({ currentTime, duration, onProgressChange }: Progres
       clearInterval(updateIntervalRef.current);
     }
 
-    updateIntervalRef.current = setInterval(updateProgress, 100);
-    updateProgress();
-  }, [currentSound, onProgressChange]);
+    updateIntervalRef.current = setInterval(tick, 200);
+    tick();
+  }, [currentSound, onProgressChange, duration]);
 
   useEffect(() => {
     if (!currentSound) return;
@@ -57,28 +65,48 @@ export function ProgressBar({ currentTime, duration, onProgressChange }: Progres
     };
   }, [currentSound, startProgressInterval]);
 
+  // Reset progress and buffered state when the sound or duration changes
+  useEffect(() => {
+    isDraggingRef.current = false;
+    setBufferPercent(0);
+    onProgressChange([0]);
+  }, [currentSound, duration]);
+
   const handleSliderChange = (value: number[]) => {
     isDraggingRef.current = true;
     onProgressChange(value);
   };
 
   const handleSliderCommit = (value: number[]) => {
-    if (currentSound) {
-      currentSound.seek(value[0]);
-      onProgressChange(value);
-      isDraggingRef.current = false;
-      startProgressInterval();
+    if (!currentSound) return;
+    if (currentSound instanceof HTMLMediaElement) {
+      try { currentSound.currentTime = value[0]; } catch (e) { console.warn('Failed to set currentTime', e); }
     }
+    onProgressChange(value);
+    isDraggingRef.current = false;
+    startProgressInterval();
   };
+
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLSpanElement>) => {
+    if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+      event.preventDefault()
+      event.stopPropagation()
+    }
+  }
+
+
+
 
   return (
     <div className="flex items-center gap-3">
       <span className="text-xs text-gray-400 font-mono min-w-[35px]">
         {formatTime(currentTime)}
       </span>
-      <Slider
+      <div className="relative flex-1 w-full">
+        <Slider
         value={[currentTime]}
         max={duration}
+        onKeyDown={handleKeyDown}
         step={1}
         onValueChange={handleSliderChange}
         onValueCommit={handleSliderCommit}
@@ -88,10 +116,9 @@ export function ProgressBar({ currentTime, duration, onProgressChange }: Progres
         aria-valuenow={currentTime}
         aria-valuetext={`${formatTime(currentTime)} de ${formatTime(duration)}`}
         className="flex-1 w-full h-6 touch-none relative"
-        thumbClassName="w-4 h-4 bg-white border border-gray-300 rounded-full shadow-md hover:scale-110 transition-transform"
-        trackClassName="h-2 bg-gray-300 rounded-full"
-        rangeClassName="bg-blue-500 rounded-full"
+        bufferPercent={bufferPercent}
       />
+      </div>
       <span className="text-xs text-gray-400 font-mono min-w-[35px]">
         {formatTime(duration)}
       </span>

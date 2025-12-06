@@ -40,12 +40,12 @@ export function PlaylistItem({ name, songs, isActive, onClick }: PlaylistItemPro
         "w-full flex items-center gap-3 px-3 py-2 rounded-lg",
         "text-sm font-medium text-left",
         "transition-all duration-200",
-        "hover:bg-orange-500/10",
-        isActive ? "bg-orange-500/20 text-orange-400" : "text-gray-400 hover:text-orange-400"
+        "hover:bg-accent-10",
+        isActive ? "bg-accent-20 text-accent" : "text-gray-400 hover:text-accent"
       )}
     >
       {/* Stack de portadas */}
-      <div className="relative w-16 h-12 flex-shrink-0">
+      <div className="relative w-16 h-12 shrink-0">
         {/* Tercera portada (fondo) */}
         <div className="absolute top-0 left-0 w-10 h-10 rounded-lg overflow-hidden transform translate-x-4 translate-y-2 shadow-md">
           {getCoverArt(2)}

@@ -3,9 +3,14 @@ interface ElectronAPI {
   closeApp: () => Promise<void>;
   minimizeApp: () => Promise<void>;
   maximizeApp: () => Promise<void>;
-  openFile: () => Promise<Song[]>;
-  processMetadata: (filePaths: Song[]) => Promise<Song[]>;
-  getAudioData: (filePath: string) => Promise
+  openFile: () => Promise<string[]>;
+  processMetadata: (filePaths: string[]) => Promise<Song[]>;
+  getAudioData: (filePath: string) => Promise<string | null>;
+  getAudioStreamUrl: (filePath: string) => Promise<string | null>;
+  getUserConfig: () => Promise<any>;
+  setUserConfig: (config: any) => Promise<any>;
+  onConfigUpdated?: (listener: (config: any) => void) => void;
+  openConfigFolder: () => Promise<any>;
 }
 
 export interface Song {

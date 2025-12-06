@@ -4,14 +4,24 @@ import './App.css'
 import { MediaPlayerBar } from './app/components/player-controls/player-controls'
 import { useMusicStore } from './store/useMusic'
 import { Sidebar } from './app/components/sidebar/sidebar'
-import { useEffect, useRef, useState } from 'react'
-import MiniMusicPlayer from './app/mini-mode/mini-mode'
+import { useEffect, useState } from 'react'
+import { useConfigStore } from '@/store/useConfig'
+import { Dialogs } from './app/components/dialogs/Dialogs'
 
 function App() {
   const { currentSong } = useMusicStore();
   const [miniMode, setMiniMode] = useState(false);
-
+  
   useEffect(() => {
+    // Inicializar el store cargando playlists desde IndexedDB
+    // Se ejecuta una sola vez al montar el componente
+    const init = async () => {
+      await useMusicStore.getState().initStore();
+      useConfigStore.getState().loadConfig();
+    };
+    
+    init();
+    
     // Escuchar evento de modo mini usando la API segura del preload
     const handleMiniMode = (_event: Event) => {
       const e = _event as CustomEvent;
@@ -24,13 +34,11 @@ function App() {
     return () => {
       window.removeEventListener('mini-mode', handleMiniMode);
     };
-  }, []);
+  }, []); // Array vacío = solo se ejecuta al montar
 
   return (
     <>
-    {miniMode &&
-      <MiniMusicPlayer></MiniMusicPlayer>
-    }
+    <Dialogs miniMode={miniMode} />
     <div className='relative flex flex-col h-screen text-white bg-slate-900 overflow-hidden' style={{
       display: miniMode ? "none" : "flex"
     }}>
@@ -51,7 +59,7 @@ function App() {
               <div className="artwork-overlay" />
             </>
           ) : (
-            <div className="absolute inset-0 bg-gradient-to-br from-gray-900 to-gray-800" />
+            <div className="absolute inset-0 bg-linear-to-br from-gray-900 to-gray-800" />
           )}
         </div>
       </div>
@@ -59,7 +67,7 @@ function App() {
       {/* Gradientes de ambiente */}
       <div className="fixed inset-0 pointer-events-none z-0">
         <div 
-          className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/60 to-transparent opacity-90"
+          className="absolute inset-0 bg-linear-to-t from-gray-900 via-gray-900/60 to-transparent opacity-90"
           style={{ mixBlendMode: 'multiply' }}
         />
         <div 

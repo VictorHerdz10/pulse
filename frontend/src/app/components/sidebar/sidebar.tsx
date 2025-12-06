@@ -56,15 +56,15 @@ export function Sidebar() {
       )}
     >
       {/* Botón de expandir */}
-      <button
+          <button
         onClick={() => setIsExpanded(!isExpanded)}
         className={cn(
           "absolute -right-3 top-8",
-          "w-6 h-6 bg-orange-500/90 text-slate-900",
+          "w-6 h-6 bg-accent/90 text-slate-900",
           "flex items-center justify-center",
-          "hover:bg-orange-400 transition-all",
-          "border border-orange-400/20",
-          "rounded-full shadow-lg shadow-orange-500/20",
+          "hover:bg-accent-20 transition-all",
+          "border border-accent/20",
+          "rounded-full shadow-lg",
           "hover:scale-105 hover:-translate-x-0.5 active:scale-95",
           "backdrop-blur-sm"
         )}
@@ -73,7 +73,7 @@ export function Sidebar() {
           className={cn(
             "w-4 h-4 transition-transform duration-300",
             isExpanded ? "rotate-180" : "",
-            "stroke-[3]"
+            "stroke-3"
           )}
         />
       </button>
@@ -87,10 +87,10 @@ export function Sidebar() {
             "transition-all duration-300"
           )}
         >
-          <ListMusic className="w-5 h-5 text-orange-500" />
+          <ListMusic className="w-5 h-5 text-accent" />
           <span
             className={cn(
-              "text-sm font-semibold text-orange-500 whitespace-nowrap",
+              "text-sm font-semibold text-accent whitespace-nowrap",
               "transition-all duration-300",
               isExpanded ? "opacity-100" : "opacity-0"
             )}
@@ -145,7 +145,7 @@ export function Sidebar() {
               <Button
                 onClick={handleCreatePlaylist}
                 variant="ghost"
-                className="w-full justify-start gap-2 text-orange-400 hover:text-orange-300 hover:bg-orange-500/10"
+                className="w-full justify-start gap-2 text-accent hover:text-accent hover:bg-accent-10"
               >
                 <PlusCircle className="w-4 h-4" />
                 Nueva Playlist
@@ -157,21 +157,20 @@ export function Sidebar() {
       {/* Dialog para crear playlist */}
       {showDialog && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 animate-fade-in">
-          <div className="bg-gray-900 rounded-xl shadow-2xl p-6 w-full max-w-xs flex flex-col gap-4 border border-orange-500 animate-scale-in">
-            <h2 className="text-lg font-bold text-orange-400 mb-2 animate-slide-down">Nueva Playlist</h2>
+          <div className="bg-gray-900 rounded-xl shadow-2xl p-6 w-full max-w-xs flex flex-col gap-4 border border-accent animate-scale-in" style={{ borderColor: 'var(--color-accent)' }}>
+            <h2 className="text-lg font-bold text-accent mb-2 animate-slide-down">Nueva Playlist</h2>
             <input
               type="text"
               value={playlistName}
               onChange={e => setPlaylistName(e.target.value)}
               placeholder="Nombre de la playlist"
-              className="px-3 py-2 rounded bg-gray-800 text-white border border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-400 transition-all duration-200 animate-fade-in"
-              autoFocus
+              className="px-3 py-2 rounded bg-gray-800 text-white ring-0 focus:ring-0 focus:border-0 focus:outline-0 transition-all duration-200 animate-fade-in" 
             />
             <div className="flex gap-2 justify-end mt-2">
-              <Button variant="ghost" onClick={() => setShowDialog(false)} className="transition-all duration-200 hover:bg-orange-500/10">
+              <Button variant="ghost" onClick={() => setShowDialog(false)} className="transition-all duration-200 hover:bg-accent-10">
                 Cancelar
               </Button>
-              <Button variant="default" onClick={handleDialogSave} className="bg-gradient-to-r from-orange-500 to-orange-400 text-white font-semibold shadow-lg hover:scale-105 active:scale-95 transition-all duration-200">
+              <Button variant="default" onClick={handleDialogSave} className="text-white font-semibold shadow-lg hover:scale-105 active:scale-95 transition-all duration-200 bg-accent" style={{ backgroundColor: 'var(--color-accent)' }}>
                 Guardar
               </Button>
             </div>
@@ -188,7 +187,7 @@ export function Sidebar() {
               <Button variant="ghost" onClick={() => setShowDeleteDialog(false)} className="transition-all duration-200 hover:bg-red-500/10">
                 Cancelar
               </Button>
-              <Button variant="default" onClick={confirmDeletePlaylist} className="bg-gradient-to-r from-red-500 to-orange-400 text-white font-semibold shadow-lg hover:scale-105 active:scale-95 transition-all duration-200">
+              <Button variant="default" onClick={confirmDeletePlaylist} className="bg-linear-to-r from-red-500 to-red-400 text-white font-semibold shadow-lg hover:scale-105 active:scale-95 transition-transform">
                 Eliminar
               </Button>
             </div>

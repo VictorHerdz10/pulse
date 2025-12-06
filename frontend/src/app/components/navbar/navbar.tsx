@@ -1,8 +1,22 @@
 "use client"
 
-import { Minus, X, MoreVertical, Settings, Info, FileText, HelpCircle, Maximize } from 'lucide-react'
+import { Minus, X, MoreVertical, Settings, Info, Maximize } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { useMusicStore } from '@/store/useMusic';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { useConfigStore } from '@/store/useConfig';
+
+
+declare module 'react' {
+  interface CSSProperties {
+    WebkitAppRegion?: string;
+  }
+}
 
 function CurrentSongTitle() {
   const { currentSong } = useMusicStore();
@@ -25,7 +39,7 @@ function CurrentSongTitle() {
         />
       )}
       <div className="flex flex-col items-center">
-        <span className="text-sm font-medium text-orange-400">
+        <span className="text-sm font-medium text-accent">
           {currentSong.title}
         </span>
         <span className="text-xs text-gray-400">
@@ -35,16 +49,9 @@ function CurrentSongTitle() {
     </div>
   );
 }
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 
 export default function ElectronNavbar() {
-
+  const { setOpenVersionDialog, setOpenSettingsDialog } = useConfigStore()
   const handleMinimize = () => {
     window.electronAPI.minimizeApp()
   }
@@ -60,14 +67,23 @@ export default function ElectronNavbar() {
   }
 
   const handleMenuAction = (action: string) => {
-    console.log(`Acción del menú: ${action}`)
+    if (action === "configuracion") {
+      setOpenSettingsDialog(true);
+    }
+    else if (action === "acerca") {
+      setOpenVersionDialog(true);
+    }
   }
 
   return (
-    <div className="flex items-center justify-between h-12 bg-slate-900/95 border-b border-slate-800 select-none p-0 w-full relative backdrop-blur-sm">
+    <div className="flex items-center justify-between h-12 bg-slate-900/95 border-b border-slate-800 select-none p-0 w-full relative backdrop-blur-sm " style={{ 
+      WebkitAppRegion: 'drag',
+    }}>
       {/* Menú lateral izquierdo */}
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
+      <DropdownMenu >
+        <DropdownMenuTrigger asChild style={{
+        WebkitAppRegion: 'no-drag',
+      }}>
           <Button 
             variant="ghost" 
             // h-full para ocupar todo el alto, w-12 para un ancho fijo, rounded-none para esquinas cuadradas
@@ -79,18 +95,10 @@ export default function ElectronNavbar() {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start" className="w-48">
-          <DropdownMenuItem onClick={() => handleMenuAction("nuevo")}>
-            <FileText className="mr-2 h-4 w-4" />
-            Nuevo archivo
-          </DropdownMenuItem>
+         
           <DropdownMenuItem onClick={() => handleMenuAction("configuracion")}>
             <Settings className="mr-2 h-4 w-4" />
             Configuración
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => handleMenuAction("ayuda")}>
-            <HelpCircle className="mr-2 h-4 w-4" />
-            Ayuda
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => handleMenuAction("acerca")}>
             <Info className="mr-2 h-4 w-4" />
@@ -105,7 +113,9 @@ export default function ElectronNavbar() {
       </div>
 
       {/* Controles de ventana - lado derecho */}
-      <div className="flex items-center h-full">
+      <div className="flex items-center h-full" style={{
+        WebkitAppRegion: 'no-drag',
+      }}>
         <Button
           variant="ghost"
           // h-full para ocupar todo el alto, w-12 para un ancho fijo, rounded-none para esquinas cuadradas

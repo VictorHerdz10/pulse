@@ -31,7 +31,7 @@ export function PlaybackControls({
         onClick={onShuffle}
         className={`h-9 w-9 rounded-lg transition-all duration-200 ${
           isShuffled 
-            ? 'text-orange-400 bg-orange-400/10 hover:bg-orange-400/20' 
+            ? 'text-accent bg-accent-10 hover:bg-accent-20' 
             : 'text-gray-400 hover:text-white hover:bg-gray-700/50'
         }`}
       >
@@ -52,7 +52,7 @@ export function PlaybackControls({
       {/* Play/Pause */}
       <Button
         onClick={onPlayPause}
-        className="w-12 h-12 rounded-full bg-orange-500 hover:bg-orange-400 text-gray-900 shadow-lg transition-all duration-200 hover:scale-105 p-0"
+        className="w-12 h-12 rounded-full bg-accent hover:bg-accent-20 text-gray-900 shadow-lg transition-all duration-200 hover:scale-105 p-0"
       >
         {isPlaying ? (
           <Pause className="w-5 h-5 fill-current" />
@@ -78,7 +78,7 @@ export function PlaybackControls({
         onClick={onRepeat}
         className={`h-9 w-9 rounded-lg transition-all duration-200 ${
           repeatMode 
-            ? 'text-orange-400 bg-orange-400/10 hover:bg-orange-400/20' 
+            ? 'text-accent bg-accent-10 hover:bg-accent-20' 
             : 'text-gray-400 hover:text-white hover:bg-gray-700/50'
         }`}
       >
