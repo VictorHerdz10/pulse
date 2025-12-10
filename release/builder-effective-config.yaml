@@ -40,4 +40,9 @@ publish:
   provider: github
   owner: The-Pulse-Proyect
   repo: pulse
+extraResources:
+  - from: node_modules/ffmpeg-static
+    filter:
+      - ffmpeg
+      - ffmpeg.exe
 electronVersion: 37.3.1

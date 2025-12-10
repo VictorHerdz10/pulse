@@ -1,47 +1,59 @@
-import ffmpeg from 'fluent-ffmpeg';
-import ffmpegPath from 'ffmpeg-static';
-import sharp from 'sharp';
-import stream from 'stream';
-import { promisify } from 'util';
+import ffmpeg from 'fluent-ffmpeg'
+import sharp from 'sharp'
+import stream from 'stream'
+import path from 'path'
+import { app } from 'electron'
 
-const pipeline = promisify(stream.pipeline);
-if (!ffmpegPath) {
-  throw new Error('ffmpeg-static did not provide an ffmpeg path');
-}
-ffmpeg.setFfmpegPath(ffmpegPath);
+// Resolver ruta de ffmpeg correctamente
+const ffmpegPath: string = app.isPackaged
+  ? path.join(
+      process.resourcesPath,
+      process.platform === 'win32' ? 'ffmpeg.exe' : 'ffmpeg'
+    )
+  : require('ffmpeg-static')
 
-// Función principal
-export async function extractThumbnailBase64(videoPath: string): Promise<string> {
-  const pass = new stream.PassThrough();
+ffmpeg.setFfmpegPath(ffmpegPath)
 
-  // start ffmpeg and pipe its output into the PassThrough
+/**
+ * Extrae un thumbnail del segundo 1 del video
+ * y lo devuelve como base64
+ */
+export async function extractThumbnailBase64(
+  videoPath: string
+): Promise<string> {
+  const pass = new stream.PassThrough()
+
+await new Promise<void>((resolve, reject) => {
   ffmpeg(videoPath)
-    .format('image2') // formato de imagen
-    .frames(1)        // solo un frame
-    .seekInput(1)     // segundo 1
-    .outputOptions('-vframes 1') // asegurar solo un frame
-    .pipe(pass, { end: true });
+    .format('image2')
+    .frames(1)
+    .seekInput(1)
+    .outputOptions('-vframes 1')
+    .on('error', reject)
+    .on('end', () => resolve()) // ✅ FIX
+    .pipe(pass, { end: true })
+})
 
-  // collect the streamed image into a Buffer
-  const chunks: Buffer[] = [];
+  const chunks: Buffer[] = []
   for await (const chunk of pass) {
-    chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+    chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk))
   }
-  const inputBuffer = Buffer.concat(chunks);
 
-  // Comprimir y convertir a base64 directamente
+  const inputBuffer = Buffer.concat(chunks)
+
   const buffer = await sharp(inputBuffer)
-    .resize(320, 180)
+    .resize(320, 180, { fit: 'cover' })
     .jpeg({ quality: 60 })
-    .toBuffer();
+    .toBuffer()
 
-  const base64 = buffer.toString('base64');
-  const dataUri = `data:image/jpeg;base64,${base64}`;
-  return dataUri;
+  return `data:image/jpeg;base64,${buffer.toString('base64')}`
 }
 
+/**
+ * Formatea duración en segundos a mm:ss
+ */
 export const formatDuration = (duration: number): string => {
-    const minutes = Math.floor(duration / 60);
-    const seconds = Math.floor(duration % 60);
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
-};
+  const minutes = Math.floor(duration / 60)
+  const seconds = Math.floor(duration % 60)
+  return `${minutes}:${seconds.toString().padStart(2, '0')}`
+}

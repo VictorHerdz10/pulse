@@ -19,7 +19,6 @@ export async function playSound(filePath: string, songId?: string) {
     const current = useMusicStore.getState().currentSong ?? null;
     setOpenErrorDialog(true, 'No se encontró el audio para la canción.', current);
     // Cambiar a siguiente canción en lugar de eliminar
-    skipToNextSong();
     return null;
   }
 

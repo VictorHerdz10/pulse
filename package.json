@@ -39,6 +39,7 @@
     "wait-on": "^7.2.0"
   },
   "dependencies": {
+    "@ffmpeg/ffmpeg": "^0.12.15",
     "cors": "^2.8.5",
     "electron-squirrel-startup": "^1.0.1",
     "express": "^5.1.0",
@@ -104,6 +105,16 @@
       "provider": "github",
       "owner": "The-Pulse-Proyect",
       "repo": "pulse"
-    }
+    },
+    "extraResources": [
+      {
+        "from": "node_modules/ffmpeg-static",
+        "to": ".",
+        "filter": [
+          "ffmpeg",
+          "ffmpeg.exe"
+        ]
+      }
+    ]
   }
 }
