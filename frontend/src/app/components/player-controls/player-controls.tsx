@@ -22,6 +22,9 @@ export function MediaPlayerBar() {
   const { currentSong, isPlaying, setIsPlaying, toggleLike } = useMusicStore()
   const { currentSound, isShuffled, toggleShuffle, repeatMode, toggleRepeatMode } = useSoundStore()
 
+  const { currentSong, isPlaying, setIsPlaying, toggleLike } = useMusicStore()
+  const { currentSound, isShuffled, toggleShuffle, repeatMode, toggleRepeatMode } = useSoundStore()
+  
   const handleProgressChange = (value: number[]) => {
     setCurrentTime(value[0])
   }

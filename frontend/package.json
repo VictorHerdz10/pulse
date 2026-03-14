@@ -31,6 +31,29 @@
       "icon": "assets/icon.ico"
     }
   },
+  "build": {
+    "appId": "com.pulse.miapp",
+    "productName": "Pulse",
+    "files": [
+      "dist/main.js",
+      "dist/**/*",
+      "package.json"
+    ],
+    "directories": {
+      "buildResources": "build"
+    },
+    "win": {
+      "icon": "assets/icon.ico"
+    },
+    "mac": {
+      "icon": "assets/icon.icns"
+    },
+    "linux": {
+      "icon": "assets/icon.ico"
+    }
+  },
+
+
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.14",
     "@radix-ui/react-dropdown-menu": "^2.1.15",

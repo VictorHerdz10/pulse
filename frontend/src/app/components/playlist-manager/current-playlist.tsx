@@ -208,6 +208,7 @@ export function CurrentPlaylist() {
             })}
           </div>
         </div>
+ 
       </div>
     </div>
   );
